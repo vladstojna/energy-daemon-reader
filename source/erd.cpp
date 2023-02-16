@@ -22,7 +22,8 @@ auto default_error_handler_v =
       std::cerr << msg << " (" << ec << ")" << std::endl;
     };
 
-auto default_output_v = +[](const char *) noexcept {};
+auto default_output_v =
+    +[](const char *msg) noexcept { std::cout << msg << "\n"; };
 
 std::error_code get_errno() noexcept {
   return std::error_code{errno, std::system_category()};
