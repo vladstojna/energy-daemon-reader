@@ -1,16 +1,13 @@
 cmake_minimum_required(VERSION 3.14...3.22)
 
 # ---- Project ----
-
-# Note: update this to your new project's name and version
 project(
-  Greeter
+  EnergyReadingDaemon
   VERSION 1.0
   LANGUAGES CXX
 )
 
 # ---- Include guards ----
-
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   message(
     FATAL_ERROR
@@ -20,7 +17,6 @@ endif()
 
 # ---- Add dependencies via CPM ----
 # see https://github.com/TheLartians/CPM.cmake for more info
-
 include(cmake/CPM.cmake)
 
 # PackageProject.cmake will be used to make our target installable
