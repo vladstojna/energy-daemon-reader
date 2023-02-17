@@ -8,8 +8,8 @@ from typing import Optional, Tuple
 shared_lib_path = os.environ.get("ERD_SHARED_LIB", None)
 if not shared_lib_path:
     print("Environment variable ERD_SHARED_LIB not set", file=sys.stderr)
-    print("Falling back to ./erd.so", file=sys.stderr)
-    shared_lib_path = "./erd.so"
+    print("Falling back to ./liberd.so", file=sys.stderr)
+    shared_lib_path = "./liberd.so"
 print("Shared library: {}".format(shared_lib_path))
 _erdlib = ctypes.CDLL(shared_lib_path)
 

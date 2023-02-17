@@ -180,7 +180,7 @@ containing the path to the `*.so`:
 export ERD_SHARED_LIB=/path/to/shared/lib.so
 ```
 
-Otherwise, put the library in the same directory as your script and name it `erd.so`.
+Otherwise, put the library in the same directory as your script and name it `liberd.so`.
 
 ```python
 import time
@@ -212,4 +212,15 @@ Shared library: /path/to/shared/lib.so
 Found domain /sys/class/powercap/intel-rapl/intel-rapl:0 of socket 0
 Duration: (1001103211, <TimeUnit.nanosecond: 1>)
 Energy: (3884939, <EnergyUnit.microjoule: 1>)
+```
+
+Without `ERD_SHARED_LIB` set:
+
+```txt
+Environment variable ERD_SHARED_LIB not set
+Falling back to ./liberd.so
+Shared library: ./liberd.so
+Found domain /sys/class/powercap/intel-rapl/intel-rapl:0 of socket 0
+Duration: (1001129149, <TimeUnit.nanosecond: 1>)
+Energy: (4053822, <EnergyUnit.microjoule: 1>)
 ```
