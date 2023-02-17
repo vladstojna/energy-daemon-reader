@@ -40,7 +40,12 @@ pip install --user python_bindings
 ## Usage
 
 The library has three components: a C++ implementation and interface, a C wrapper and Python
-bindings.
+bindings. It uses the [powercap](https://www.kernel.org/doc/html/latest/power/powercap/powercap.html)
+framework available in Linux and requires reading permissions for the following files:
+
+- `/sys/class/powercap/**/name`
+- `/sys/class/powercap/**/energy_uj`
+- `/sys/class/powercap/**/max_energy_range_uj`
 
 ### C++ Interface
 
