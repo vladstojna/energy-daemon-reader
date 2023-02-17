@@ -36,15 +36,15 @@ typedef enum erd_rapl_domain_e {
 } erd_rapl_domain_t;
 
 typedef struct erd_readings_st {
-  int64_t timestamp;
+  int64_t time;
   uint64_t energy;
   erd_time_unit_t tunit;
   erd_energy_unit_t eunit;
 } erd_readings_t;
 
 typedef struct erd_error_descriptor_st {
-  char *what = NULL;
-  uint64_t size = 0;
+  char *what;
+  uint64_t size;
 } erd_error_descriptor_t;
 
 typedef struct erd_attr_st *erd_attr_t;

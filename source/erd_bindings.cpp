@@ -127,7 +127,7 @@ erd_status_t erd_obtain_readings(erd_handle_t handle, erd_readings_t *into,
       }
       return generic_error(ed, ec.message());
     }
-    into->timestamp = readings.timestamp.time_since_epoch().count();
+    into->time = readings.timestamp.time_since_epoch().count();
     into->energy = readings.energy.count();
     into->tunit = ERD_NANOSECOND;
     into->eunit = ERD_MICROJOULE;
@@ -143,14 +143,12 @@ erd_status_t erd_subtract_readings(erd_handle_t handle,
                                    erd_readings_t *result) {
   try {
     const erd::reader_t &reader = *reinterpret_cast<erd::reader_t *>(handle);
-    erd::readings_t left{
-        erd::time_point_t{erd::clock_t::duration{lhs->timestamp}},
-        erd::energy_t{lhs->energy}};
-    erd::readings_t right{
-        erd::time_point_t{erd::clock_t::duration{rhs->timestamp}},
-        erd::energy_t{rhs->energy}};
+    erd::readings_t left{erd::time_point_t{erd::clock_t::duration{lhs->time}},
+                         erd::energy_t{lhs->energy}};
+    erd::readings_t right{erd::time_point_t{erd::clock_t::duration{rhs->time}},
+                          erd::energy_t{rhs->energy}};
     erd::difference_t diff = reader.subtract(left, right);
-    result->timestamp = diff.duration.count();
+    result->time = diff.duration.count();
     result->energy = diff.energy_consumed.count();
     result->tunit = ERD_NANOSECOND;
     result->eunit = ERD_MICROJOULE;

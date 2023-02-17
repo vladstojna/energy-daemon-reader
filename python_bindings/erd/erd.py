@@ -47,7 +47,7 @@ class _erd_handle_st(ctypes.Structure):
 
 class _erd_readings_st(ctypes.Structure):
     _fields_ = [
-        ("timestamp", ctypes.c_int64),
+        ("time", ctypes.c_int64),
         ("energy", ctypes.c_uint64),
         ("tunit", _erd_time_unit_t),
         ("eunit", _erd_energy_unit_t),
@@ -207,15 +207,22 @@ class Attributes:
         self._finalizer()
 
 
-class Readings:
+class _ReadingsBase:
     def __init__(self, native: _erd_readings_st) -> None:
         self._native = native
 
-    def timestamp(self) -> Tuple[int, TimeUnit]:
-        return (self._native.timestamp, TimeUnit(self._native.tunit.value))
-
     def energy(self) -> Tuple[int, EnergyUnit]:
         return (self._native.energy, EnergyUnit(self._native.eunit.value))
+
+
+class Readings(_ReadingsBase):
+    def timestamp(self) -> Tuple[int, TimeUnit]:
+        return (self._native.time, TimeUnit(self._native.tunit.value))
+
+
+class Difference(_ReadingsBase):
+    def duration(self) -> Tuple[int, TimeUnit]:
+        return (self._native.time, TimeUnit(self._native.tunit.value))
 
 
 class Handle:
@@ -253,7 +260,7 @@ class Handle:
             raise Error("Error obtaining readings", StatusCode(status.value))
         return Readings(readings_native)
 
-    def subtract(self, lhs: Readings, rhs: Readings) -> Readings:
+    def subtract(self, lhs: Readings, rhs: Readings) -> Difference:
         readings_native = _erd_readings_st()
         status: _erd_status_t = _erdlib.erd_subtract_readings(
             self._pointer,
@@ -263,7 +270,7 @@ class Handle:
         )
         if status.value != StatusCode.success.value:
             raise Error("Error obtaining readings", StatusCode(status.value))
-        return Readings(readings_native)
+        return Difference(readings_native)
 
     def __enter__(self):
         return self
