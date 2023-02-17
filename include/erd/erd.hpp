@@ -61,11 +61,6 @@ struct difference_t {
 };
 
 class reader_t {
-private:
-  attributes_t attr_;
-  detail::file_descriptor sensor_;
-  energy_t maxvalue_;
-
 public:
   explicit reader_t(attributes_t attr);
 
@@ -77,6 +72,10 @@ public:
   const attributes_t &attributes() const noexcept;
 
 private:
+  attributes_t attr_;
+  detail::file_descriptor sensor_;
+  energy_t maxvalue_;
+
   reader_t(attributes_t &&attr, const std::string &prefix);
 };
 

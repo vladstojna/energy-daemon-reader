@@ -178,7 +178,7 @@ bool get_sensor_file_prefix(const erd::attributes_t &attr, char *path,
       if (pkg_number == attr.socket) {
         if (attr.domain == erd::domain_t::package) {
           erd::default_output(
-              fmt::format("Registered domain {} of socket {}", path, pkg_number)
+              fmt::format("Found domain {} of socket {}", path, pkg_number)
                   .c_str());
           return true;
         }
@@ -192,8 +192,7 @@ bool get_sensor_file_prefix(const erd::attributes_t &attr, char *path,
               return false;
             } else if (dmn == attr.domain) {
               erd::default_output(
-                  fmt::format("Registered domain {} of socket {}", path,
-                              pkg_number)
+                  fmt::format("Found domain {} of socket {}", path, pkg_number)
                       .c_str());
               return true;
             }

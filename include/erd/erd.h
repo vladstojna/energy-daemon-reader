@@ -19,19 +19,14 @@ typedef enum erd_status_e {
 } erd_status_t;
 
 typedef enum erd_energy_unit_e {
-  ERD_JOULE = (1u << 0),
-  ERD_MICROJOULE = (1u << 1),
+  ERD_JOULE,
+  ERD_MICROJOULE,
 } erd_energy_unit_t;
 
 typedef enum erd_time_unit_e {
-  ERD_SECOND = (1u << 0),
-  ERD_NANOSECOND = (1u << 1),
+  ERD_SECOND,
+  ERD_NANOSECOND,
 } erd_time_unit_t;
-
-typedef enum erd_representation_e {
-  ERD_FRAC = (1u << 2),
-  ERD_INTEGER = (1u << 3),
-} erd_representation_t;
 
 typedef enum erd_rapl_domain_e {
   ERD_PACKAGE,
@@ -46,19 +41,6 @@ typedef struct erd_readings_st {
   erd_time_unit_t tunit;
   erd_energy_unit_t eunit;
 } erd_readings_t;
-
-// typedef struct erd_readings_st2 {
-//   union {
-//     int64_t i;
-//     double f;
-//   } timestamp;
-//   union {
-//     uint64_t u;
-//     double f;
-//   } energy;
-//   uint32_t trepr;
-//   uint32_t erepr;
-// } erd_readings_t2;
 
 typedef struct erd_error_descriptor_st {
   char *what = NULL;
