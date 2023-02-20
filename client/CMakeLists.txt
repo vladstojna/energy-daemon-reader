@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14...3.22)
 
-project(Daemon LANGUAGES CXX)
+project(Client LANGUAGES CXX)
 
 # --- Import tools ----
 include(../cmake/tools.cmake)
@@ -15,12 +15,12 @@ CPMAddPackage(
 )
 
 set(ASIO_REPOSITORY
-    "https://github.com/chriskohlhoff/asio"
-    CACHE STRING "Repository of asio"
+  "https://github.com/chriskohlhoff/asio"
+  CACHE STRING "Repository of asio"
 )
 set(ASIO_TAG
-    "asio-1-24-0"
-    CACHE STRING "Git tag of asio"
+  "asio-1-24-0"
+  CACHE STRING "Git tag of asio"
 )
 
 CPMAddPackage(
@@ -37,7 +37,7 @@ file(GLOB sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
 
 add_executable(${PROJECT_NAME} ${sources})
 
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17 OUTPUT_NAME "Daemon")
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17 OUTPUT_NAME "Client")
 
 target_link_libraries(${PROJECT_NAME} EnergyReadingDaemon::EnergyReadingDaemon cxxopts)
 target_link_libraries(${PROJECT_NAME} EnergyReadingDaemon::EnergyReadingDaemon asio::asio)
