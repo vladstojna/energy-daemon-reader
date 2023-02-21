@@ -298,12 +298,12 @@ bool reader_t::obtain_readings(readings_t &into,
 difference_t reader_t::subtract(const readings_t &lhs,
                                 const readings_t &rhs) const noexcept {
 
-  if (lhs.energy > rhs.energy) {
-    return difference_t{lhs.timestamp - rhs.timestamp, lhs.energy - rhs.energy};
+  // potential overflow occured
+  if (rhs.energy > lhs.energy) {
+    energy_t new_energy = maxvalue_ + lhs.energy;
+    return difference_t{lhs.timestamp - rhs.timestamp, new_energy - rhs.energy};
   }
-  // potential overflow has occurred
-  energy_t new_energy = maxvalue_ + lhs.energy;
-  return difference_t{lhs.timestamp - rhs.timestamp, new_energy - rhs.energy};
+  return difference_t{lhs.timestamp - rhs.timestamp, lhs.energy - rhs.energy};
 }
 
 const attributes_t &reader_t::attributes() const noexcept { return attr_; }
