@@ -39,5 +39,4 @@ add_executable(${PROJECT_NAME} ${sources})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17 OUTPUT_NAME "Daemon")
 
-target_link_libraries(${PROJECT_NAME} EnergyReadingDaemon::EnergyReadingDaemon cxxopts)
-target_link_libraries(${PROJECT_NAME} EnergyReadingDaemon::EnergyReadingDaemon asio::asio)
+target_link_libraries(${PROJECT_NAME} EnergyReadingDaemon::EnergyReadingDaemon cxxopts asio::asio)
