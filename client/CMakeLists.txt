@@ -15,12 +15,12 @@ CPMAddPackage(
 )
 
 set(ASIO_REPOSITORY
-  "https://github.com/chriskohlhoff/asio"
-  CACHE STRING "Repository of asio"
+    "https://github.com/chriskohlhoff/asio"
+    CACHE STRING "Repository of asio"
 )
 set(ASIO_TAG
-  "asio-1-24-0"
-  CACHE STRING "Git tag of asio"
+    "asio-1-24-0"
+    CACHE STRING "Git tag of asio"
 )
 
 CPMAddPackage(

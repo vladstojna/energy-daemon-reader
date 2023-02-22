@@ -1,10 +1,10 @@
-#include <asio/error_code.hpp>
-#include <asio/io_context.hpp>
-#include <asio/local/stream_protocol.hpp>
+#include "client.hpp"
+
 #include <fmt/format.h>
 
 #include <cstdlib>
 #include <iostream>
+#include <thread>
 
 static std::string get_socket_path() {
   auto get_socket_prefix = []() -> std::string {
@@ -22,17 +22,28 @@ static std::string get_socket_path() {
 
 int main() {
   std::string socket_path = get_socket_path();
-
   std::cout << socket_path << "\n";
-  asio::error_code ec;
-  asio::io_context context;
-  asio::local::stream_protocol::endpoint endpoint(socket_path);
-  asio::local::stream_protocol::socket socket(context);
 
-  socket.connect(endpoint, ec);
-  if (!ec) {
-    std::cerr << "Connected!\n";
-  } else {
-    std::cerr << "Error connecting to socket: " << ec.message() << "\n";
+  erd::ipc::reader_client reader{socket_path};
+  erd::readings_t before;
+  erd::readings_t after;
+
+  if (std::error_code ec; !reader.obtain_readings(before, ec)) {
+    std::cerr << "Error obtaining readings: " << ec.message() << "\n";
+    return 1;
   }
+  std::this_thread::sleep_for(std::chrono::seconds{1});
+  if (std::error_code ec; !reader.obtain_readings(after, ec)) {
+    std::cerr << "Error obtaining readings: " << ec.message() << "\n";
+    return 1;
+  }
+
+  erd::difference_t diff;
+  if (std::error_code ec; !reader.subtract(diff, after, before, ec)) {
+    std::cerr << "Error subtracting readings: " << ec.message() << "\n";
+    return 1;
+  }
+
+  std::cout << "Duration: " << diff.duration.count() << " ns\n";
+  std::cout << "Energy: " << diff.energy_consumed.count() << " uJ\n";
 }
