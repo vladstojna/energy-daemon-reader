@@ -262,8 +262,8 @@ The request is a 44-byte message:
 | Field          | Size (bytes) | Type | Value                  |
 | -------------- | ------------ | ---- | ---------------------- |
 | operation type | 4            | uint | 0-1                    |
-| readings left  | 20           | -    | valid if op. type is 0 |
-| readings right | 20           | -    | valid if op. type is 0 |
+| readings left  | 20           | -    | valid if op. type is 1 |
+| readings right | 20           | -    | valid if op. type is 1 |
 
 The readings field is as follows:
 
@@ -296,3 +296,8 @@ a time duration rather than a timestamp.
 | energy    | 8            | uint | -     |
 | time unit | 2            | uint | 0-1   |
 | energy    | 2            | uint | 0-1   |
+
+#### Values
+
+The meaning of each value can be found in the corresponding
+[header file.](include/erd/ipc/message.hpp)
