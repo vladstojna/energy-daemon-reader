@@ -9,8 +9,9 @@
 static std::string get_socket_path() {
   auto get_socket_prefix = []() -> std::string {
     char *env = std::getenv("XDG_RUNTIME_DIR");
-    if (!env)
+    if (!env) {
       return "/tmp";
+    }
     return env;
   };
 

@@ -6,23 +6,23 @@
 namespace {
 
 template <typename T> T retrieve_field(const char *from) {
-  T x;
-  std::memcpy(&x, from, sizeof(x));
-  return x;
+  T val;
+  std::memcpy(&val, from, sizeof(val));
+  return val;
 }
 
 template <typename T> T retrieve_field_advance(const char *&from) {
-  T x = ::retrieve_field<T>(from);
-  from += sizeof(x);
-  return x;
+  T val = ::retrieve_field<T>(from);
+  from += sizeof(val);
+  return val;
 }
 
-template <typename T> void insert_field(char *to, const T &x) {
-  std::memcpy(to, &x, sizeof(T));
+template <typename T> void insert_field(char *to, const T &val) {
+  std::memcpy(to, &val, sizeof(T));
 }
 
-template <typename T> void insert_field_advance(char *&to, const T &x) {
-  ::insert_field(to, x);
+template <typename T> void insert_field_advance(char *&to, const T &val) {
+  ::insert_field(to, val);
   to += sizeof(T);
 }
 
@@ -177,7 +177,8 @@ bool message_request::readings(readings_t &lhs, readings_t &rhs,
   if (!::deserialize_readings(buffer_, lhs, ec)) {
     return false;
   }
-  return ::deserialize_readings(buffer_ + 20, rhs, ec);
+  constexpr uint32_t READINGS_BYTE_COUNT = 20;
+  return ::deserialize_readings(buffer_ + READINGS_BYTE_COUNT, rhs, ec);
 }
 
 void message_request::serialize() noexcept {

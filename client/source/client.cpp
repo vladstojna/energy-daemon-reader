@@ -40,14 +40,14 @@ bool reader_client::subtract(difference_t &into, const readings_t &lhs,
 
 bool reader_client::comm_common(std::error_code &ec) noexcept {
   size_t bytes;
-  bytes =
-      socket_.write_some(asio::buffer(request_.buffer(), request_.size), ec);
+  bytes = socket_.write_some(
+      asio::buffer(request_.buffer(), erd::ipc::message_request::size), ec);
   if (ec) {
     return false;
   }
   assert(bytes == request_.size);
-  bytes =
-      socket_.read_some(asio::buffer(response_.buffer(), response_.size), ec);
+  bytes = socket_.read_some(
+      asio::buffer(response_.buffer(), erd::ipc::message_response::size), ec);
   if (ec) {
     return false;
   }
