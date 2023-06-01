@@ -4,9 +4,7 @@
 
 #include <cstdint>
 
-namespace erd {
-
-namespace ipc {
+namespace erd::ipc {
 
 enum class operation_type_t : uint32_t {
   obtain_readings,
@@ -34,11 +32,11 @@ struct message_common {
 public:
   static constexpr size_t size = sizeof(operation_type_t);
 
-  operation_type_t operation_type() const noexcept;
+  [[nodiscard]] operation_type_t operation_type() const noexcept;
 
   char *buffer() noexcept;
 
-  const char *buffer() const noexcept;
+  [[nodiscard]] const char *buffer() const noexcept;
 
 protected:
   void serialize(operation_type_t optype) noexcept;
@@ -67,7 +65,7 @@ class message_response : public detail::message_common {
 public:
   static constexpr size_t size = detail::message_common::size + 24;
 
-  status_code_t status_code() const noexcept;
+  [[nodiscard]] status_code_t status_code() const noexcept;
 
   bool readings(readings_t &into, std::error_code &ec) const noexcept;
 
@@ -80,6 +78,4 @@ private:
   char buffer_[size - detail::message_common::size];
 };
 
-} // namespace ipc
-
-} // namespace erd
+} // namespace erd::ipc
