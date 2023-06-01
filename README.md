@@ -225,3 +225,74 @@ Found domain /sys/class/powercap/intel-rapl/intel-rapl:0 of socket 0
 Duration: (1001129149, <TimeUnit.nanosecond: 1>)
 Energy: (4053822, <EnergyUnit.microjoule: 1>)
 ```
+
+### IPC
+
+There is support for inter-process communication, during which a daemon process
+reads the powercap counters by way of client requests.
+
+#### Daemon
+
+To start the server, simply execute the binary. It is possible to optionally
+set the RAPL domain and CPU socket to query with:
+
+```sh
+./daemon --domain <domain> --socket <socket>
+```
+
+Additionally, if running multiple servers, it is recommended to use the
+`--unique` argument, which will create a uniquely named UNIX domain socket.
+Another approach would be to set the `ERD_SOCKET` environment variable with
+the desired path.
+
+#### Client
+
+The client implementation is for demonstration purposes, simply run the binary
+to query the energy from the daemon. If running the server with `--unique`, set
+the `ERD_SOCKET` variable pointing to the socket path before running the client.
+
+#### Protocol
+
+The protocol is simple and consists of fixed-size messages.
+
+##### Request
+
+The request is a 44-byte message:
+
+| Field          | Size (bytes) | Type | Value                  |
+| -------------- | ------------ | ---- | ---------------------- |
+| operation type | 4            | uint | 0-1                    |
+| readings left  | 20           | -    | valid if op. type is 0 |
+| readings right | 20           | -    | valid if op. type is 0 |
+
+The readings field is as follows:
+
+| Field     | Size (bytes) | Type | Value |
+| --------- | ------------ | ---- | ----- |
+| timestamp | 8            | int  | -     |
+| energy    | 8            | uint | -     |
+| time unit | 2            | uint | 0-1   |
+| energy    | 2            | uint | 0-1   |
+
+The readings fields only need to contain valid data if the operation type is 1,
+which is a subtraction request. When 0, it is a query request.
+
+##### Response
+
+The response is a 28-byte message:
+
+| Field                  | Size (bytes) | Type | Value                                            |
+| ---------------------- | ------------ | ---- | ------------------------------------------------ |
+| operation type         | 4            | uint | 0-1                                              |
+| status code            | 4            | uint | 0 if success, 1 otherwise                        |
+| readings \| difference | 20           | -    | readings if op. type is 0, difference if it is 1 |
+
+The difference field is equal to the readings field, but its first element is
+a time duration rather than a timestamp.
+
+| Field     | Size (bytes) | Type | Value |
+| --------- | ------------ | ---- | ----- |
+| duration  | 8            | int  | -     |
+| energy    | 8            | uint | -     |
+| time unit | 2            | uint | 0-1   |
+| energy    | 2            | uint | 0-1   |
