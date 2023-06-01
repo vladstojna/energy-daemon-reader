@@ -14,7 +14,7 @@ Diagnostics:
       readability-identifier-length.MinimumVariableNameLength: 2
       readability-identifier-naming.VariableCase: [lower_case, UPPER_CASE]
       readability-implicit-bool-conversion.AllowPointerConditions: true
-    Remove: [modernize-use-trailing-return-type]
+    Remove: [modernize-use-trailing-return-type, modernize-avoid-c-arrays]
 ---
 CompileFlags:
   Add:
