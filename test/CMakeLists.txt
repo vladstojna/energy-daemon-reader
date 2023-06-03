@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14...3.22)
 
-project(EnergyReadingDaemonTests LANGUAGES CXX)
+project(erd_tests LANGUAGES CXX)
 
 # ---- Options ----
 option(ENABLE_TEST_COVERAGE "Enable test coverage" OFF)
@@ -16,28 +16,28 @@ CPMAddPackage("gh:doctest/doctest@2.4.9")
 CPMAddPackage("gh:TheLartians/Format.cmake@1.7.3")
 
 if(TEST_INSTALLED_VERSION)
-  find_package(EnergyReadingDaemon REQUIRED)
+  find_package(erd REQUIRED)
 else()
-  CPMAddPackage(NAME EnergyReadingDaemon SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
+  CPMAddPackage(NAME erd SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
 endif()
 
 # ---- Create binary ----
 file(GLOB sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
 add_executable(${PROJECT_NAME} ${sources})
-target_link_libraries(${PROJECT_NAME} doctest::doctest EnergyReadingDaemon::EnergyReadingDaemon)
+target_link_libraries(${PROJECT_NAME} doctest::doctest erd::erd)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 
 # enable compiler warnings
 if(NOT TEST_INSTALLED_VERSION)
   if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    target_compile_options(EnergyReadingDaemon PUBLIC -Wall -Wpedantic -Wextra -Werror)
+    target_compile_options(erd PUBLIC -Wall -Wpedantic -Wextra -Werror)
   elseif(MSVC)
-    target_compile_options(EnergyReadingDaemon PUBLIC /W4 /WX)
+    target_compile_options(erd PUBLIC /W4 /WX)
     target_compile_definitions(${PROJECT_NAME} PUBLIC DOCTEST_CONFIG_USE_STD_HEADERS)
   endif()
 endif()
 
-# ---- Add EnergyReadingDaemonTests ----
+# ---- Add erd_tests ----
 enable_testing()
 
 # Note: doctest and similar testing frameworks can automatically configure CMake tests. For other
@@ -48,6 +48,6 @@ doctest_discover_tests(${PROJECT_NAME})
 
 # ---- code coverage ----
 if(ENABLE_TEST_COVERAGE)
-  target_compile_options(EnergyReadingDaemon PUBLIC -O0 -g -fprofile-arcs -ftest-coverage)
-  target_link_options(EnergyReadingDaemon PUBLIC -fprofile-arcs -ftest-coverage)
+  target_compile_options(erd PUBLIC -O0 -g -fprofile-arcs -ftest-coverage)
+  target_link_options(erd PUBLIC -fprofile-arcs -ftest-coverage)
 endif()

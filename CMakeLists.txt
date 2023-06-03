@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14...3.22)
 
 # ---- Project ----
 project(
-  EnergyReadingDaemon
+  erd
   VERSION 1.0
   LANGUAGES CXX
 )
@@ -20,7 +20,7 @@ endif()
 include(cmake/CPM.cmake)
 
 # PackageProject.cmake will be used to make our target installable
-CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.8.0")
+CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.11.0")
 
 CPMAddPackage(
   NAME fmt
