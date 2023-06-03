@@ -15,6 +15,11 @@ if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   )
 endif()
 
+option(ERD_BUILD_SHARED_LIB "Build erd as a shared library for use with the Python bindings" OFF)
+if(ERD_BUILD_SHARED_LIB)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
+
 # ---- Add dependencies via CPM ----
 # see https://github.com/TheLartians/CPM.cmake for more info
 include(cmake/CPM.cmake)
@@ -27,7 +32,6 @@ CPMAddPackage(
   GIT_TAG 9.1.0
   GITHUB_REPOSITORY fmtlib/fmt
   OPTIONS "FMT_INSTALL YES" # create an installable target
-  OPTIONS "CMAKE_POSITION_INDEPENDENT_CODE TRUE"
 )
 
 # ---- Add source files ----
@@ -41,7 +45,11 @@ file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/
 
 # Note: for header-only libraries change all PUBLIC flags to INTERFACE and create an interface
 # target: add_library(${PROJECT_NAME} INTERFACE)
-add_library(${PROJECT_NAME} SHARED ${headers} ${sources})
+if(ERD_BUILD_SHARED_LIB)
+  add_library(${PROJECT_NAME} SHARED ${headers} ${sources})
+else()
+  add_library(${PROJECT_NAME} STATIC ${headers} ${sources})
+endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 
 # being a cross-platform target, we enforce standards conformance on MSVC

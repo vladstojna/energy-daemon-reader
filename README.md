@@ -174,8 +174,9 @@ Energy: 3494498 uJ
 
 ### Python Interface
 
-To work with the Python bindings, we have to set the environment variable `ERD_SHARED_LIB`
-containing the path to the `*.so`:
+To work with the Python bindings, the library must be built with
+`ERD_BUILD_SHARED_LIB`, and we have to set the environment variable
+`ERD_SHARED_LIB` containing the path to the `*.so`:
 
 ```sh
 export ERD_SHARED_LIB=/path/to/shared/lib.so
