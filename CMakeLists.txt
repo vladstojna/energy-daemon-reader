@@ -16,16 +16,30 @@ if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
 endif()
 
 option(ERD_BUILD_SHARED_LIB "Build erd as a shared library for use with the Python bindings" OFF)
-option(ERD_POWERCAP "Whether powercap is available" ON)
 
-file(GLOB powercap "/sys/class/powercap/")
-list(LENGTH powercap powercap_len)
-if(powercap_len EQUAL 0 AND NOT ERD_POWERCAP)
-  set(ERD_NO_POWERCAP ON)
-  add_compile_definitions(ERD_NO_POWERCAP)
-  message(NOTICE "[#] powercap not present, building erd without powercap support (no-op)")
-else()
+function(checkpowercap)
+  file(GLOB powercap "/sys/class/powercap/")
+  list(LENGTH powercap powercap_len)
+  if(powercap_len EQUAL 0)
+    set(ERD_POWERCAP
+        OFF
+        PARENT_SCOPE
+    )
+  else()
+    set(ERD_POWERCAP
+        ON
+        PARENT_SCOPE
+    )
+  endif()
+endfunction()
+
+if(NOT DEFINED ERD_POWERCAP)
+  checkpowercap()
+endif()
+if(ERD_POWERCAP)
   add_compile_definitions(ERD_POWERCAP)
+else()
+  message(NOTICE "[#] powercap not present, building erd without powercap support (no-op)")
 endif()
 
 if(ERD_BUILD_SHARED_LIB)
@@ -66,15 +80,15 @@ target_sources(
           "${CMAKE_CURRENT_SOURCE_DIR}/source/erd_common.cpp"
           "${CMAKE_CURRENT_SOURCE_DIR}/source/message.cpp"
 )
-if(ERD_NO_POWERCAP)
-  target_sources(
-    ${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/erd/erd_nop.hpp"
-                            "${CMAKE_CURRENT_SOURCE_DIR}/source/erd_nop.cpp"
-  )
-else()
+if(ERD_POWERCAP)
   target_sources(
     ${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/erd/erd_powercap.hpp"
                             "${CMAKE_CURRENT_SOURCE_DIR}/source/erd_powercap.cpp"
+  )
+else()
+  target_sources(
+    ${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/erd/erd_nop.hpp"
+                            "${CMAKE_CURRENT_SOURCE_DIR}/source/erd_nop.cpp"
   )
 endif()
 
