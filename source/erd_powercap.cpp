@@ -1,4 +1,4 @@
-#include <erd/erd.hpp>
+#include <erd/erd_powercap.hpp>
 #include <fmt/format.h>
 
 #include <charconv>
@@ -16,14 +16,6 @@ constexpr char DOMAIN_PKG_PREFIX[] = "package";
 constexpr char DOMAIN_PP0[] = "core";
 constexpr char DOMAIN_PP1[] = "uncore";
 constexpr char DOMAIN_DRAM[] = "dram";
-
-auto default_error_handler_v =
-    +[](const char *msg, std::error_code ec) noexcept {
-      std::cerr << msg << " (" << ec << ")" << std::endl;
-    };
-
-auto default_output_v =
-    +[](const char *msg) noexcept { std::cout << msg << "\n"; };
 
 std::error_code get_errno() noexcept {
   return std::error_code{errno, std::system_category()};
@@ -308,19 +300,5 @@ difference_t reader_t::subtract(const readings_t &lhs,
 
 const attributes_t &reader_t::attributes() const noexcept { return attr_; }
 
-void set_default_output(void (*func)(const char *) noexcept) noexcept {
-  default_output_v = func;
-}
-
-void default_output(const char *msg) noexcept { default_output_v(msg); }
-
-void set_default_error_handler(
-    void (*func)(const char *, std::error_code) noexcept) noexcept {
-  default_error_handler_v = func;
-}
-
-void default_error_handler(const char *msg, std::error_code ec) noexcept {
-  return default_error_handler_v(msg, std::move(ec));
-}
 
 } // namespace erd

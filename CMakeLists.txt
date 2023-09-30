@@ -16,6 +16,18 @@ if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
 endif()
 
 option(ERD_BUILD_SHARED_LIB "Build erd as a shared library for use with the Python bindings" OFF)
+option(ERD_POWERCAP "Whether powercap is available" ON)
+
+file(GLOB powercap "/sys/class/powercap/")
+list(LENGTH powercap powercap_len)
+if(powercap_len EQUAL 0 AND NOT ERD_POWERCAP)
+  set(ERD_NO_POWERCAP ON)
+  add_compile_definitions(ERD_NO_POWERCAP)
+  message(NOTICE "[#] powercap not present, building erd without powercap support (no-op)")
+else()
+  add_compile_definitions(ERD_POWERCAP)
+endif()
+
 if(ERD_BUILD_SHARED_LIB)
   set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
@@ -34,22 +46,38 @@ CPMAddPackage(
   OPTIONS "FMT_INSTALL YES" # create an installable target
 )
 
-# ---- Add source files ----
-
-# Note: globbing sources is considered bad practice as CMake's generators may not detect new files
-# automatically. Keep that in mind when changing files, or explicitly mention them here.
-file(GLOB_RECURSE headers CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
-file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp")
-
 # ---- Create library ----
 
 # Note: for header-only libraries change all PUBLIC flags to INTERFACE and create an interface
 # target: add_library(${PROJECT_NAME} INTERFACE)
 if(ERD_BUILD_SHARED_LIB)
-  add_library(${PROJECT_NAME} SHARED ${headers} ${sources})
+  add_library(${PROJECT_NAME} SHARED)
 else()
-  add_library(${PROJECT_NAME} STATIC ${headers} ${sources})
+  add_library(${PROJECT_NAME} STATIC)
 endif()
+
+target_sources(
+  ${PROJECT_NAME}
+  PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/erd/ipc/message.hpp"
+          "${CMAKE_CURRENT_SOURCE_DIR}/include/erd/units.hpp"
+          "${CMAKE_CURRENT_SOURCE_DIR}/include/erd/erd.hpp"
+          "${CMAKE_CURRENT_SOURCE_DIR}/include/erd/erd.h"
+          "${CMAKE_CURRENT_SOURCE_DIR}/source/erd_bindings.cpp"
+          "${CMAKE_CURRENT_SOURCE_DIR}/source/erd_common.cpp"
+          "${CMAKE_CURRENT_SOURCE_DIR}/source/message.cpp"
+)
+if(ERD_NO_POWERCAP)
+  target_sources(
+    ${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/erd/erd_nop.hpp"
+                            "${CMAKE_CURRENT_SOURCE_DIR}/source/erd_nop.cpp"
+  )
+else()
+  target_sources(
+    ${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/erd/erd_powercap.hpp"
+                            "${CMAKE_CURRENT_SOURCE_DIR}/source/erd_powercap.cpp"
+  )
+endif()
+
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 
 # being a cross-platform target, we enforce standards conformance on MSVC
