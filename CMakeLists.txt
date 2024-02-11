@@ -18,7 +18,7 @@ endif()
 option(ERD_BUILD_SHARED_LIB "Build erd as a shared library for use with the Python bindings" OFF)
 
 function(checkpowercap)
-  file(GLOB powercap "/sys/class/powercap/")
+  file(GLOB powercap "/sys/class/powercap/*")
   list(LENGTH powercap powercap_len)
   if(powercap_len EQUAL 0)
     set(ERD_POWERCAP
